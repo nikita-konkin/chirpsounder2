@@ -2,23 +2,45 @@ import numpy as n
 import glob
 import h5py
 import os
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+os.environ.setdefault("MPLBACKEND", "Agg")
+import sys
+import subprocess
+import gc
+import ctypes
 import chirp_config as cc
 import chirp_det as cd
 import re
 import time
-import matplotlib.dates as mdates
 import scipy.constants as sc
 from datetime import datetime
 import psutil
 from datetime import datetime, timedelta, timezone
 
+plt = None
+mdates = None
 p = psutil.Process()
 # Set I/O priority to idle (lowest) to avoid interrupting realtime processes
 p.ionice(psutil.IOPRIO_CLASS_IDLE)
 p.nice(19)
+
+def current_rss_mb():
+    return p.memory_info().rss / 1024.0**2
+
+def trim_process_memory():
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except Exception:
+        pass
+
+def ensure_plotting_imports():
+    global plt, mdates
+    if plt is None:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as mpl_plt
+        import matplotlib.dates as mpl_dates
+        plt = mpl_plt
+        mdates = mpl_dates
 
 def needs_daily_plot(pfname, now=None):
     if now is None:
@@ -86,8 +108,12 @@ def get_ionogram_files(data_dir, tx, rx, dirname=None, recent_days=3):
     return fl
 
 def get_t0(path):
-    with h5py.File(path, "r") as h:
-        return h["t0"][()]
+    try:
+        with h5py.File(path, "r") as h:
+            return h["t0"][()]
+    except (BlockingIOError, OSError) as exc:
+        print("skipping unreadable ionogram metadata %s: %s"%(path, exc))
+        return None
 
 def get_ionogram_files_in_time_range(data_dir, tx, rx, start_t, end_t):
     day_start = n.floor(start_t/24/3600)*24*3600
@@ -102,7 +128,7 @@ def get_ionogram_files_in_time_range(data_dir, tx, rx, start_t, end_t):
     range_files = []
     for path in fl:
         t0 = get_t0(path)
-        if start_t <= t0 < end_t:
+        if t0 is not None and start_t <= t0 < end_t:
             range_files.append(path)
     return range_files
 
@@ -143,13 +169,25 @@ def plot_ionogram_files(
         title_span=None,
         range_min_km=None,
         range_max_km=None):
+    ensure_plotting_imports()
     print("creating RTI and RTF")
     if len(fl)<3:
         print("not enough soundings %s %s"%(tx,rx))
         return
 
-    with h5py.File(fl[-1], "r") as h:
-        ranges, freqs, snr, t0 = read_ionogram(h)
+    ref = None
+    while fl and ref is None:
+        ref_path = fl[-1]
+        try:
+            with h5py.File(ref_path, "r") as h:
+                ref = read_ionogram(h)
+        except (BlockingIOError, OSError) as exc:
+            print("skipping unreadable reference ionogram %s: %s"%(ref_path, exc))
+            fl = fl[:-1]
+    if ref is None:
+        print("no readable soundings %s %s"%(tx,rx))
+        return
+    ranges, freqs, snr, t0 = ref
     if len(ranges) == 0:
         print("no range gates %s %s"%(tx,rx))
         return
@@ -160,9 +198,16 @@ def plot_ionogram_files(
     S=n.full([n_t,n_r], n.nan)
     M=n.full([n_t,n_r], n.nan)
     tv=n.zeros(n_t)
+    valid_files = 0
     for fi,f in enumerate(fl):
-        with h5py.File(f, "r") as h:
-            cur_ranges, cur_freqs, SNR, tv[fi] = read_ionogram(h)
+        try:
+            with h5py.File(f, "r") as h:
+                cur_ranges, cur_freqs, SNR, tv[fi] = read_ionogram(h)
+        except (BlockingIOError, OSError) as exc:
+            print("skipping unreadable ionogram %s: %s"%(f, exc))
+            tv[fi] = n.nan
+            continue
+        valid_files += 1
         cur_n_f = SNR.shape[0]
         SNR = regrid_snr_to_ranges(cur_ranges, SNR, ranges)
         for ri in range(n_r):
@@ -180,6 +225,14 @@ def plot_ionogram_files(
 #            S[fi,ri]=freqs[n.nanargmax(SNR[:,ri])]
  #           M[fi,ri]=n.nanmax(SNR[:,ri])
 
+
+    if valid_files < 3:
+        print("not enough readable soundings %s %s"%(tx,rx))
+        return
+    valid_idx = n.isfinite(tv)
+    tv = tv[valid_idx]
+    S = S[valid_idx, :]
+    M = M[valid_idx, :]
 
     # convert unix time to datetime
     t = n.array([datetime.utcfromtimestamp(x) for x in tv])
@@ -408,6 +461,24 @@ def plot_rtf_link_range(conf, links, start_day, end_day, data_dir=None, range_mi
             range_min_km=range_min_km,
             range_max_km=range_max_km)
 
+def plot_rtf_subprocess(args):
+    cmd = [
+        sys.executable,
+        os.path.abspath(__file__),
+        "--config",
+        args.config,
+        "--plot-once",
+    ]
+    if args.sounding_path != "":
+        cmd.extend(["--sounding_path", args.sounding_path])
+    if args.data_dir is not None:
+        cmd.extend(["--data-dir", args.data_dir])
+    if args.range_min_km is not None:
+        cmd.extend(["--range-min-km", str(args.range_min_km)])
+    if args.range_max_km is not None:
+        cmd.extend(["--range-max-km", str(args.range_max_km)])
+    return subprocess.run(cmd).returncode == 0
+
 def normalize_links(links):
     normalized = []
     for link in links:
@@ -466,6 +537,16 @@ if __name__ == "__main__":
         default=None,
         help="Maximum virtual range gate to plot, in km. Only valid with --sounding_path."
     )
+    parser.add_argument(
+        "--plot-once",
+        action="store_true",
+        help="Plot configured realtime RTF links once and exit."
+    )
+    parser.add_argument(
+        "--plot-in-process",
+        action="store_true",
+        help="In realtime loop mode, plot in this process instead of a child process."
+    )
     args = parser.parse_args()
     if args.end is not None and args.start is None:
         parser.error("--end requires --start")
@@ -474,7 +555,11 @@ if __name__ == "__main__":
     custom_link = args.sounding_path != ""
     if (args.range_min_km is not None or args.range_max_km is not None) and not custom_link:
         parser.error("--range-min-km and --range-max-km require --sounding_path")
-    conf = cc.chirp_config(args.config, read_shared=False)
+    conf = cc.chirp_config(
+        args.config,
+        read_shared=False,
+        build_fvec=False,
+        verbose=False)
     data_dir = args.data_dir or conf.output_dir
     if custom_link:
         links = normalize_links([args.sounding_path])
@@ -502,6 +587,16 @@ if __name__ == "__main__":
             range_min_km=args.range_min_km,
             range_max_km=args.range_max_km)
         exit(0)
+    if args.plot_once:
+        plot_rtf_links(
+            conf,
+            links,
+            data_dir=data_dir,
+            range_min_km=args.range_min_km,
+            range_max_km=args.range_max_km)
+        gc.collect()
+        trim_process_memory()
+        exit(0)
     import time
     plot_period_s = 15*60
     next_plot_time = 0.0
@@ -509,11 +604,20 @@ if __name__ == "__main__":
     while True:
         now = time.time()
         if now >= next_plot_time:
-            plot_rtf_links(
-                conf,
-                links,
-                data_dir=data_dir,
-                range_min_km=args.range_min_km,
-                range_max_km=args.range_max_km)
+            if args.plot_in_process:
+                plot_ok = True
+                plot_rtf_links(
+                    conf,
+                    links,
+                    data_dir=data_dir,
+                    range_min_km=args.range_min_km,
+                    range_max_km=args.range_max_km)
+            else:
+                plot_ok = plot_rtf_subprocess(args)
+            gc.collect()
+            trim_process_memory()
+            if not plot_ok:
+                print("WARNING: plot_rtf.py child plotting pass failed")
+            print("plot_rtf.py: realtime supervisor rss %.1f MB"%(current_rss_mb()))
             next_plot_time = time.time() + plot_period_s
         time.sleep(max(1.0, min(60.0, next_plot_time - time.time())))
