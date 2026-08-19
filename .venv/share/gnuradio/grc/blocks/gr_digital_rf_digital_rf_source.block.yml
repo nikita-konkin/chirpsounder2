@@ -1,0 +1,628 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2019 Massachusetts Institute of Technology (MIT)
+# All rights reserved.
+#
+# Distributed under the terms of the BSD 3-clause license.
+#
+# The full license is in the LICENSE file, distributed with this software.
+# ----------------------------------------------------------------------------
+
+id: gr_digital_rf_digital_rf_source
+label: Digital RF Source
+category: Digital RF
+flags:
+- ${ 'throttle' if throttle else '' }
+
+parameters:
+-   id: top_level_dir
+    label: Directory
+    dtype: string
+-   id: repeat
+    label: Repeat
+    dtype: bool
+    default: 'False'
+    options: ['True', 'False']
+    option_labels: ['Yes', 'No']
+    hide: ${ 'none' if repeat else 'part' }
+-   id: throttle
+    label: Throttle
+    dtype: bool
+    default: 'False'
+    options: ['True', 'False']
+    option_labels: ['Yes', 'No']
+    hide: ${ 'none' if throttle else 'part' }
+-   id: gapless
+    label: Gapless Playback
+    dtype: bool
+    default: 'False'
+    options: ['True', 'False']
+    option_labels: ['Yes', 'No']
+    hide: part
+
+-   id: nchan
+    label: Number of channels
+    dtype: int
+    default: '1'
+    options: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32 ]
+    hide: part
+-   id: channel0
+    label: Ch0
+    dtype: string
+    default: ch0
+    hide: ${ 'none' if nchan > 0 else 'all' }
+-   id: start0
+    label: "Ch0: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 0 else 'all' }
+-   id: end0
+    label: "Ch0: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 0 else 'all' }
+-   id: channel1
+    label: Ch1
+    dtype: string
+    default: ch1
+    hide: ${ 'none' if nchan > 1 else 'all' }
+-   id: start1
+    label: "Ch1: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 1 else 'all' }
+-   id: end1
+    label: "Ch1: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 1 else 'all' }
+-   id: channel2
+    label: Ch2
+    dtype: string
+    default: ch2
+    hide: ${ 'none' if nchan > 2 else 'all' }
+-   id: start2
+    label: "Ch2: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 2 else 'all' }
+-   id: end2
+    label: "Ch2: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 2 else 'all' }
+-   id: channel3
+    label: Ch3
+    dtype: string
+    default: ch3
+    hide: ${ 'none' if nchan > 3 else 'all' }
+-   id: start3
+    label: "Ch3: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 3 else 'all' }
+-   id: end3
+    label: "Ch3: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 3 else 'all' }
+-   id: channel4
+    label: Ch4
+    dtype: string
+    default: ch4
+    hide: ${ 'none' if nchan > 4 else 'all' }
+-   id: start4
+    label: "Ch4: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 4 else 'all' }
+-   id: end4
+    label: "Ch4: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 4 else 'all' }
+-   id: channel5
+    label: Ch5
+    dtype: string
+    default: ch5
+    hide: ${ 'none' if nchan > 5 else 'all' }
+-   id: start5
+    label: "Ch5: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 5 else 'all' }
+-   id: end5
+    label: "Ch5: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 5 else 'all' }
+-   id: channel6
+    label: Ch6
+    dtype: string
+    default: ch6
+    hide: ${ 'none' if nchan > 6 else 'all' }
+-   id: start6
+    label: "Ch6: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 6 else 'all' }
+-   id: end6
+    label: "Ch6: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 6 else 'all' }
+-   id: channel7
+    label: Ch7
+    dtype: string
+    default: ch7
+    hide: ${ 'none' if nchan > 7 else 'all' }
+-   id: start7
+    label: "Ch7: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 7 else 'all' }
+-   id: end7
+    label: "Ch7: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 7 else 'all' }
+-   id: channel8
+    label: Ch8
+    dtype: string
+    default: ch8
+    hide: ${ 'none' if nchan > 8 else 'all' }
+-   id: start8
+    label: "Ch8: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 8 else 'all' }
+-   id: end8
+    label: "Ch8: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 8 else 'all' }
+-   id: channel9
+    label: Ch9
+    dtype: string
+    default: ch9
+    hide: ${ 'none' if nchan > 9 else 'all' }
+-   id: start9
+    label: "Ch9: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 9 else 'all' }
+-   id: end9
+    label: "Ch9: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 9 else 'all' }
+-   id: channel10
+    label: Ch10
+    dtype: string
+    default: ch10
+    hide: ${ 'none' if nchan > 10 else 'all' }
+-   id: start10
+    label: "Ch10: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 10 else 'all' }
+-   id: end10
+    label: "Ch10: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 10 else 'all' }
+-   id: channel11
+    label: Ch11
+    dtype: string
+    default: ch11
+    hide: ${ 'none' if nchan > 11 else 'all' }
+-   id: start11
+    label: "Ch11: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 11 else 'all' }
+-   id: end11
+    label: "Ch11: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 11 else 'all' }
+-   id: channel12
+    label: Ch12
+    dtype: string
+    default: ch12
+    hide: ${ 'none' if nchan > 12 else 'all' }
+-   id: start12
+    label: "Ch12: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 12 else 'all' }
+-   id: end12
+    label: "Ch12: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 12 else 'all' }
+-   id: channel13
+    label: Ch13
+    dtype: string
+    default: ch13
+    hide: ${ 'none' if nchan > 13 else 'all' }
+-   id: start13
+    label: "Ch13: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 13 else 'all' }
+-   id: end13
+    label: "Ch13: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 13 else 'all' }
+-   id: channel14
+    label: Ch14
+    dtype: string
+    default: ch14
+    hide: ${ 'none' if nchan > 14 else 'all' }
+-   id: start14
+    label: "Ch14: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 14 else 'all' }
+-   id: end14
+    label: "Ch14: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 14 else 'all' }
+-   id: channel15
+    label: Ch15
+    dtype: string
+    default: ch15
+    hide: ${ 'none' if nchan > 15 else 'all' }
+-   id: start15
+    label: "Ch15: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 15 else 'all' }
+-   id: end15
+    label: "Ch15: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 15 else 'all' }
+-   id: channel16
+    label: Ch16
+    dtype: string
+    default: ch16
+    hide: ${ 'none' if nchan > 16 else 'all' }
+-   id: start16
+    label: "Ch16: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 16 else 'all' }
+-   id: end16
+    label: "Ch16: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 16 else 'all' }
+-   id: channel17
+    label: Ch17
+    dtype: string
+    default: ch17
+    hide: ${ 'none' if nchan > 17 else 'all' }
+-   id: start17
+    label: "Ch17: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 17 else 'all' }
+-   id: end17
+    label: "Ch17: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 17 else 'all' }
+-   id: channel18
+    label: Ch18
+    dtype: string
+    default: ch18
+    hide: ${ 'none' if nchan > 18 else 'all' }
+-   id: start18
+    label: "Ch18: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 18 else 'all' }
+-   id: end18
+    label: "Ch18: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 18 else 'all' }
+-   id: channel19
+    label: Ch19
+    dtype: string
+    default: ch19
+    hide: ${ 'none' if nchan > 19 else 'all' }
+-   id: start19
+    label: "Ch19: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 19 else 'all' }
+-   id: end19
+    label: "Ch19: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 19 else 'all' }
+-   id: channel20
+    label: Ch20
+    dtype: string
+    default: ch20
+    hide: ${ 'none' if nchan > 20 else 'all' }
+-   id: start20
+    label: "Ch20: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 20 else 'all' }
+-   id: end20
+    label: "Ch20: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 20 else 'all' }
+-   id: channel21
+    label: Ch21
+    dtype: string
+    default: ch21
+    hide: ${ 'none' if nchan > 21 else 'all' }
+-   id: start21
+    label: "Ch21: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 21 else 'all' }
+-   id: end21
+    label: "Ch21: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 21 else 'all' }
+-   id: channel22
+    label: Ch22
+    dtype: string
+    default: ch22
+    hide: ${ 'none' if nchan > 22 else 'all' }
+-   id: start22
+    label: "Ch22: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 22 else 'all' }
+-   id: end22
+    label: "Ch22: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 22 else 'all' }
+-   id: channel23
+    label: Ch23
+    dtype: string
+    default: ch23
+    hide: ${ 'none' if nchan > 23 else 'all' }
+-   id: start23
+    label: "Ch23: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 23 else 'all' }
+-   id: end23
+    label: "Ch23: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 23 else 'all' }
+-   id: channel24
+    label: Ch24
+    dtype: string
+    default: ch24
+    hide: ${ 'none' if nchan > 24 else 'all' }
+-   id: start24
+    label: "Ch24: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 24 else 'all' }
+-   id: end24
+    label: "Ch24: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 24 else 'all' }
+-   id: channel25
+    label: Ch25
+    dtype: string
+    default: ch25
+    hide: ${ 'none' if nchan > 25 else 'all' }
+-   id: start25
+    label: "Ch25: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 25 else 'all' }
+-   id: end25
+    label: "Ch25: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 25 else 'all' }
+-   id: channel26
+    label: Ch26
+    dtype: string
+    default: ch26
+    hide: ${ 'none' if nchan > 26 else 'all' }
+-   id: start26
+    label: "Ch26: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 26 else 'all' }
+-   id: end26
+    label: "Ch26: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 26 else 'all' }
+-   id: channel27
+    label: Ch27
+    dtype: string
+    default: ch27
+    hide: ${ 'none' if nchan > 27 else 'all' }
+-   id: start27
+    label: "Ch27: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 27 else 'all' }
+-   id: end27
+    label: "Ch27: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 27 else 'all' }
+-   id: channel28
+    label: Ch28
+    dtype: string
+    default: ch28
+    hide: ${ 'none' if nchan > 28 else 'all' }
+-   id: start28
+    label: "Ch28: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 28 else 'all' }
+-   id: end28
+    label: "Ch28: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 28 else 'all' }
+-   id: channel29
+    label: Ch29
+    dtype: string
+    default: ch29
+    hide: ${ 'none' if nchan > 29 else 'all' }
+-   id: start29
+    label: "Ch29: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 29 else 'all' }
+-   id: end29
+    label: "Ch29: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 29 else 'all' }
+-   id: channel30
+    label: Ch30
+    dtype: string
+    default: ch30
+    hide: ${ 'none' if nchan > 30 else 'all' }
+-   id: start30
+    label: "Ch30: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 30 else 'all' }
+-   id: end30
+    label: "Ch30: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 30 else 'all' }
+-   id: channel31
+    label: Ch31
+    dtype: string
+    default: ch31
+    hide: ${ 'none' if nchan > 31 else 'all' }
+-   id: start31
+    label: "Ch31: start"
+    dtype: raw
+    hide: ${ 'part' if nchan > 31 else 'all' }
+-   id: end31
+    label: "Ch31: end"
+    dtype: raw
+    hide: ${ 'part' if nchan > 31 else 'all' }
+
+-   id: min_chunksize
+    label: Minimum Chunk Size
+    category: Advanced
+    dtype: int
+    default: '0'
+    hide: part
+-   id: hide_msg_port
+    label: Show Message Port
+    category: Advanced
+    dtype: enum
+    default: 'True'
+    options: ['False', 'True']
+    option_labels: ['Yes', 'No']
+    hide: part
+
+outputs:
+-   domain: stream
+    dtype: ''
+    multiplicity: ${ nchan }
+-   domain: message
+    id: properties
+    optional: true
+    hide: ${ hide_msg_port }
+asserts:
+- ${ nchan > 0 }
+- ${ min_chunksize >= 0 }
+
+templates:
+    imports: import gr_digital_rf
+    make: >
+        gr_digital_rf.digital_rf_source(
+            ${top_level_dir},
+            channels=[
+            % for n in range(int(nchan)):
+                ${ context['channel{n}'.format(n=n)] },
+            % endfor
+            ],
+            start=[
+            % for n in range(int(nchan)):
+                ${ context['start{n}'.format(n=n)] if context['start{n}'.format(n=n)] else None },
+            % endfor
+            ],
+            end=[
+            % for n in range(int(nchan)):
+                ${ context['end{n}'.format(n=n)] if context['end{n}'.format(n=n)] else None },
+            % endfor
+            ],
+            repeat=${repeat},
+            throttle=${throttle},
+            gapless=${gapless},
+            min_chunksize=${ None if min_chunksize == '0' else min_chunksize },
+        )
+    callbacks:
+    - set_gapless(${gapless})
+    - set_repeat(${repeat})
+
+documentation: |-
+    Read data in Digital RF format.
+
+    In addition to outputting samples from Digital RF format data, this
+    block also emits a 'properties' message containing inherent channel
+    properties and adds stream tags using the channel's accompanying
+    Digital Metadata. See the Notes section for details on what the
+    messages and stream tags contain.
+
+
+    Parameters
+    ---------------
+
+    Directory : string
+        A top-level directory containing Digital RF channel directories.
+
+    Repeat : bool
+        If True, loop the data continuously from the start after the end
+        is reached. If False, stop after the data is read once.
+
+    Throttle : bool
+        If True, playback the samples at their recorded sample rate.
+        If False, read samples as quickly as possible.
+
+    Gapless Playback : bool
+        If True, output zeroed samples for any missing data between start
+        and end. If False, skip missing samples and add an `rx_time` stream
+        tag to indicate the gap.
+
+    Number of channels : int
+        Number of channels to output.
+
+    ChN : string
+        Identifier for channel number N. This can be the channel name or
+        an integer giving the index from the available channels sorted
+        alphabetically. An empty string uses the next available channel
+        alphabetically.
+
+    ChN start : None | int | float | string, optional
+        A value giving the start of the channel's playback.
+
+        If None or '', the start of the channel's available data is used.
+
+        If an integer, it is interpreted as a sample index giving the
+        number of samples since the epoch (t_since_epoch*sample_rate).
+
+        If a float, it is interpreted as a timestamp (seconds since epoch).
+
+        If a string, four forms are permitted:
+            1) a string which can be evaluated to an integer/float and
+                interpreted as above,
+            2) a string beginning with '+' and followed by an integer
+                (float) expression, interpreted as samples (seconds) from
+                the start of the data, and
+            3) a time in ISO8601 format, e.g. '2016-01-01T16:24:00Z'
+            4) 'now' ('nowish'), indicating the current time (rounded up)
+
+    ChN end : None | int | float | string, optional
+        A value giving the end of the channel's playback.
+
+        If None or '', the end of the channel's available data is used.
+
+        Otherwise, this is interpreted in the same way as the start value.
+
+
+    Other Parameters
+    -----------------------
+
+    Minimum Chunk Size : int, optional
+        Minimum number of samples to output at once. This value can be
+        used to adjust the source's performance to reduce underruns and
+        processing time. If 0, a sensible default will be used.
+
+
+    Notes
+    -----
+
+    A top-level directory must contain files in the format:
+        [channel]/[YYYY-MM-DDTHH-MM-SS]/rf@[seconds].[%03i milliseconds].h5
+
+    If more than one top level directory contains the same channel_name
+    subdirectory, this is considered the same channel. An error is raised
+    if their sample rates differ, or if their time periods overlap.
+
+    Upon start, this block sends 'properties' messages on its output
+    message port that contains a dictionaries with one key, the channel's
+    name, and a value which is a dictionary of properties found in the
+    channel's 'drf_properties.h5' file.
+
+    This block emits the following stream tags at the appropriate sample
+    for each of the channel's accompanying Digital Metadata samples:
+
+        rx_time : (int secs, float frac) tuple
+            Time since epoch of the sample.
+
+        rx_rate : float
+            Sample rate in Hz.
+
+        rx_freq : float | 1-D array of floats
+            Center frequency or frequencies of the subchannels based on
+            the 'center_frequencies' metadata field.
+
+        metadata : dict
+            Any additional Digital Metadata fields are added to this
+            dictionary tag of metadata.
+
+file_format: 1
+

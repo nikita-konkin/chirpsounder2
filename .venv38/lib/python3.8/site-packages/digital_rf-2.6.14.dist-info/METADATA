@@ -1,0 +1,140 @@
+Metadata-Version: 2.1
+Name: digital_rf
+Version: 2.6.14
+Summary: Library for reading and writing time-tagged RF data in the Digital RF format
+Keywords: hdf5,radio,rf
+Author-Email: Bill Rideout <brideout@mit.edu>, Juha Vierinen <jvi019@uit.no>, Frank Lind <fdlind@mit.edu>, Ryan Volz <rvolz@mit.edu>, John Swoboda <swoboj@mit.edu>
+Maintainer-Email: Ryan Volz <rvolz@mit.edu>
+License: This software, unless otherwise noted, is licensed under the BSD 3-clause "New"
+         or "Revised" license.
+         
+         Copyright (c) 2017 Massachusetts Institute of Technology (MIT)
+         
+         Redistribution and use in source and binary forms, with or without
+         modification, are permitted provided that the following conditions are met:
+         
+         * Redistributions of source code must retain the above copyright notice, this
+           list of conditions and the following disclaimer.
+         
+         * Redistributions in binary form must reproduce the above copyright notice,
+           this list of conditions and the following disclaimer in the documentation
+           and/or other materials provided with the distribution.
+         
+         * Neither the name of the copyright holder nor the names of its
+           contributors may be used to endorse or promote products derived from
+           this software without specific prior written permission.
+         
+         THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+         AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+         IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+         DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+         FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+         DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+         SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+         CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+         OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+         OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+         
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: C
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Scientific/Engineering
+Project-URL: Homepage, https://github.com/MITHaystack/digital_rf
+Project-URL: Bug Tracker, https://github.com/MITHaystack/digital_rf/issues
+Project-URL: Discussions, https://github.com/MITHaystack/digital_rf/discussions
+Project-URL: Changelog, https://github.com/MITHaystack/digital_rf/releases
+Requires-Python: >=3.8
+Requires-Dist: h5py
+Requires-Dist: numpy
+Requires-Dist: packaging
+Requires-Dist: python-dateutil
+Requires-Dist: six
+Requires-Dist: watchdog
+Provides-Extra: test
+Requires-Dist: pytest>=6; extra == "test"
+Requires-Dist: pytest-cov>=3; extra == "test"
+Provides-Extra: dev
+Requires-Dist: pytest>=6; extra == "dev"
+Requires-Dist: pytest-cov>=3; extra == "dev"
+Provides-Extra: dataframe
+Requires-Dist: pandas; extra == "dataframe"
+Provides-Extra: plot
+Requires-Dist: matplotlib; extra == "plot"
+Requires-Dist: scipy; extra == "plot"
+Provides-Extra: sound
+Requires-Dist: sounddevice; extra == "sound"
+Provides-Extra: all
+Requires-Dist: matplotlib; extra == "all"
+Requires-Dist: pandas; extra == "all"
+Requires-Dist: scipy; extra == "all"
+Requires-Dist: sounddevice; extra == "all"
+Description-Content-Type: text/x-rst
+
+The Digital RF project encompasses a standardized HDF5 format for reading and writing of radio frequency data and the software for doing so. The format is designed to be self-documenting for data archive and to allow rapid random access for data processing.
+
+This package includes:
+
+* ``digital_rf`` Python package
+* Tools for managing and processing Digital RF data
+* ``gr_digital_rf`` Python package for interfacing with GNU Radio
+* GNU Radio Companion blocks
+* ``thor.py`` UHD radio recorder script
+* Example scripts and applications
+
+Digital RF C and MATLAB libraries can be found at the `official source code repository <https://github.com/MITHaystack/digital_rf>`_. To build from source, you must have the HDF5 library and headers installed.
+
+For help and/or questions, contact the `user mailing list <openradar-users@openradar.org>`_.
+
+
+GNU Radio Configuration
+=======================
+
+If you plan on using Digital RF with GNU Radio, make sure to run the `pip` command in the same Python environment that your GNU Radio installation uses so that GNU Radio can find the packages. Depending on your GNU Radio installation, it may be necessary to add the Digital RF blocks to your GRC blocks path by creating or editing the GRC configuration file
+
+:Unix (local): $HOME/.gnuradio/config.conf
+:Windows (local): %APPDATA%/.gnuradio/config.conf
+:Unix (global): /etc/gnuradio/conf.d/grc.conf
+:Custom (global): {INSTALL_PREFIX}/etc/gnuradio/conf.d/grc.conf
+
+to contain::
+
+    [grc]
+    local_blocks_path = {PIP_PREFIX}/share/gnuradio/grc/blocks
+
+(replacing ``{PIP_PREFIX}`` with the pip installation prefix, "/usr/local" for example).
+
+
+Example Usage
+=============
+
+The following code will load and read data located in a directory "/data/test".
+
+Load the module and create a reader object::
+
+    import digital_rf as drf
+    do = drf.DigitalRFReader('/data/test')
+
+List channels::
+
+    do.get_channels()
+
+Get data bounds for channel 'cha'::
+
+    s, e = do.get_bounds('cha')
+
+Read first 10 samples from channel 'cha'::
+
+    data = do.read_vector(s, 10, 'cha')
