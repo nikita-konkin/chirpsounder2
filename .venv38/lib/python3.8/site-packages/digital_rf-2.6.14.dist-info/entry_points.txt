@@ -1,0 +1,3 @@
+[console_scripts]
+drf = digital_rf.drf_command:main
+

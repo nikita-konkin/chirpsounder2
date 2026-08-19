@@ -55,15 +55,45 @@ def kill(conf):
     exists = os.path.isfile(conf.kill_path)
     return exists
 
-def get_valid_bounds(d, ch, poll_s=1.0):
-    """Return DigitalRF bounds once both endpoints are available."""
+def get_valid_bounds(d, ch, poll_s=1.0, max_wait_s=30.0):
+    """Return DigitalRF bounds once both endpoints are available.
+
+    Bounded, because polling forever cannot recover from the case that
+    actually happens. DigitalRFReader caches its channel list when it is
+    constructed, so a reader built before the recorder created the channel
+    directory can never see that channel however long it waits. The only cure
+    is a new reader, and raising is what lets the caller build one: both
+    long-running callers wrap DigitalRFReader(conf.data_dir) in a
+    `while True: try:`, so an exception here reopens the ringbuffer while an
+    infinite loop here never reaches them.
+
+    This is a startup race, and the consumer is started before the producer --
+    calc_ionograms.py is launched several lines ahead of rx_uhd_ext_gps in the
+    station scripts, and /dev/shm is empty after a reboot. Anything that
+    delays the recorder's first sample decides it. Adding two blocking GPSDO
+    sensor reads, 1-2 s each, to recorder startup was enough to lose it at
+    DOB, which then ran for two days recording and detecting normally while
+    writing no ionograms at all.
+
+    The hang is invisible from outside: the process stays alive and busy, the
+    unit stays active because it supervises the recorder loop and not this
+    child, and the only symptom is the message below repeating once a second
+    in the log. Failing after max_wait_s converts that into a retry that can
+    actually succeed.
+    """
+    waited = 0.0
     while True:
         b = d.get_bounds(ch)
         if b is not None and len(b) >= 2 and b[0] is not None and b[1] is not None:
             return b
 
+        if waited >= max_wait_s:
+            raise IOError("no DigitalRF bounds for channel %s after %1.0f s; "
+                          "reopening the reader" % (ch, waited))
+
         print("no DigitalRF data bounds available for channel %s; waiting for data" % (ch))
         time.sleep(poll_s)
+        waited += poll_s
 
 
 comm = MPI.COMM_WORLD
@@ -193,7 +223,20 @@ def chirp_downconvert(conf,
     sleep_time = 0.0
     sr = conf.sample_rate
     cf = conf.center_freq
-    dur = conf.maximum_analysis_frequency / rate
+    # **`dur` is the span analysed, not the top of it.** Those are the same
+    # number only while the band starts at 0 Hz. With the LO at 20 MHz the
+    # sweep is not in the band until it reaches 7.5 MHz, and analysing from
+    # zero spends the first 75 s of every sounding running FFTs over spectrum
+    # that was never digitised -- a 325 s window against a 300 s `rep`, which
+    # overruns the cycle and loses soundings.
+    #
+    # `minimum_analysis_frequency` already exists in the ini and is already
+    # parsed (chirp_config.py:287). Before this, its only reader was
+    # serendipitous_ionogram_queue.py:115, so on the scheduled path -- the one
+    # every station with `sounder_timings` runs -- setting it did nothing at
+    # all, and said nothing about it.
+    fmin = conf.minimum_analysis_frequency
+    dur = (conf.maximum_analysis_frequency - fmin) / rate
     if realtime_req == None:
         realtime_req = dur
     idx = 0
@@ -208,6 +251,24 @@ def chirp_downconvert(conf,
                                fast_boxcar_filter=conf.fast_boxcar_filter,
                                downconversion_filter=conf.downconversion_filter,
                                cic_stages=conf.cic_stages)
+
+    # Move the read pointer AND the dechirp phase to where the sweep enters the
+    # band. Both, or the mixer is off by `fmin` and every product is plausible
+    # and false. `advance_time` is the downconverter's own primitive for this --
+    # the missing-data branch below already uses it to step past a block it
+    # could not read -- and it is called here only with a single block, the
+    # argument that branch passes, so this walks a tested path instead of
+    # trusting one large jump to behave.
+    blk = step * dec
+    n_skip = int(round(fmin / rate * sr / blk)) * blk
+    for _ in range(n_skip // blk):
+        cdc.advance_time(blk)
+    idx += n_skip
+    # The *aligned* start, which is what the frequency axis has to be built
+    # from. It equals `fmin` whenever fmin/rate*sr divides the block -- 750
+    # blocks exactly at 7.5 MHz, 100 kHz/s, 25 MS/s, dec 625, step 4000 -- and
+    # this line is what keeps the axis honest when it does not.
+    f_skip = (n_skip / sr) * rate
 
     zd_len = n_windows * step
     zd = np.zeros(zd_len, dtype=np.complex64)
@@ -258,7 +319,7 @@ def chirp_downconvert(conf,
     S = spectrogram(np.conj(zd), window=fftlen,
                     step=fft_step, wf=ss.hann(fftlen))
     
-    freqs = rate * np.arange(S.shape[0]) * fft_step / sr_dec
+    freqs = f_skip + rate * np.arange(S.shape[0]) * fft_step / sr_dec
     range_gates = ds * np.fft.fftshift(np.fft.fftfreq(fftlen, d=1.0 / sr_dec))
     
     fidx = n.arange(len(freqs), dtype=int)

@@ -1,0 +1,1043 @@
+<?xml version="1.0"?>
+<!--
+  Copyright (c) 2017 Massachusetts Institute of Technology (MIT)
+  All rights reserved.
+
+  Distributed under the terms of the BSD 3-clause license.
+
+  The full license is in the LICENSE file, distributed with this software.
+-->
+<block>
+    <name>Digital RF Source</name>
+    <key>gr_digital_rf_digital_rf_source</key>
+    <category>Digital RF</category>
+    <flags>#if $throttle() then 'throttle' else ''#</flags>
+    <import>import gr_digital_rf</import>
+    <make>\
+    #set $allchannels = [$channel0(), $channel1(), $channel2(), $channel3(), $channel4(), $channel5(), $channel6(), $channel7(), $channel8(), $channel9(), $channel10(), $channel11(), $channel12(), $channel13(), $channel14(), $channel15(), $channel16(), $channel17(), $channel18(), $channel19(), $channel20(), $channel21(), $channel22(), $channel23(), $channel24(), $channel25(), $channel26(), $channel27(), $channel28(), $channel29(), $channel30(), $channel31()]
+    #set $channels = $allchannels[:$nchan()]
+    #set $allstart = [$start0(), $start1(), $start2(), $start3(), $start4(), $start5(), $start6(), $start7(), $start8(), $start9(), $start10(), $start11(), $start12(), $start13(), $start14(), $start15(), $start16(), $start17(), $start18(), $start19(), $start20(), $start21(), $start22(), $start23(), $start24(), $start25(), $start26(), $start27(), $start28(), $start29(), $start30(), $start31()]
+    #set $start = $allstart[:$nchan()]
+    #set $allend = [$end0(), $end1(), $end2(), $end3(), $end4(), $end5(), $end6(), $end7(), $end8(), $end9(), $end10(), $end11(), $end12(), $end13(), $end14(), $end15(), $end16(), $end17(), $end18(), $end19(), $end20(), $end21(), $end22(), $end23(), $end24(), $end25(), $end26(), $end27(), $end28(), $end29(), $end30(), $end31()]
+    #set $end = $allend[:$nchan()]
+    gr_digital_rf.digital_rf_source(
+        $top_level_dir,
+        channels=$channels,
+        start=$start,
+        end=$end,
+        repeat=$repeat,
+        throttle=$throttle,
+        gapless=$gapless,
+        min_chunksize=None if $min_chunksize==0 else $min_chunksize,
+    )
+    </make>
+
+    <callback>set_gapless($gapless)</callback>
+    <callback>set_repeat($repeat)</callback>
+
+    <param>
+        <name>Directory</name>
+        <key>top_level_dir</key>
+        <type>string</type>
+    </param>
+    <param>
+        <name>Repeat</name>
+        <key>repeat</key>
+        <value>False</value>
+        <type>bool</type>
+        <hide>#if $repeat() then 'none' else 'part'#</hide>
+        <option>
+            <name>Yes</name>
+            <key>True</key>
+        </option>
+        <option>
+            <name>No</name>
+            <key>False</key>
+        </option>
+    </param>
+    <param>
+        <name>Throttle</name>
+        <key>throttle</key>
+        <value>False</value>
+        <type>bool</type>
+        <hide>#if $throttle() then 'none' else 'part'#</hide>
+        <option>
+            <name>Yes</name>
+            <key>True</key>
+        </option>
+        <option>
+            <name>No</name>
+            <key>False</key>
+        </option>
+    </param>
+    <param>
+        <name>Gapless Playback</name>
+        <key>gapless</key>
+        <value>False</value>
+        <type>bool</type>
+        <hide>part</hide>
+        <option>
+            <name>Yes</name>
+            <key>True</key>
+        </option>
+        <option>
+            <name>No</name>
+            <key>False</key>
+        </option>
+    </param>
+    <param>
+        <name>Number of channels</name>
+        <key>nchan</key>
+        <value>1</value>
+        <type>int</type>
+        <hide>part</hide>
+        <option>
+            <name>1</name>
+            <key>1</key>
+        </option>
+        <option>
+            <name>2</name>
+            <key>2</key>
+        </option>
+        <option>
+            <name>3</name>
+            <key>3</key>
+        </option>
+        <option>
+            <name>4</name>
+            <key>4</key>
+        </option>
+        <option>
+            <name>5</name>
+            <key>5</key>
+        </option>
+        <option>
+            <name>6</name>
+            <key>6</key>
+        </option>
+        <option>
+            <name>7</name>
+            <key>7</key>
+        </option>
+        <option>
+            <name>8</name>
+            <key>8</key>
+        </option>
+        <option>
+            <name>9</name>
+            <key>9</key>
+        </option>
+        <option>
+            <name>10</name>
+            <key>10</key>
+        </option>
+        <option>
+            <name>11</name>
+            <key>11</key>
+        </option>
+        <option>
+            <name>12</name>
+            <key>12</key>
+        </option>
+        <option>
+            <name>13</name>
+            <key>13</key>
+        </option>
+        <option>
+            <name>14</name>
+            <key>14</key>
+        </option>
+        <option>
+            <name>15</name>
+            <key>15</key>
+        </option>
+        <option>
+            <name>16</name>
+            <key>16</key>
+        </option>
+        <option>
+            <name>17</name>
+            <key>17</key>
+        </option>
+        <option>
+            <name>18</name>
+            <key>18</key>
+        </option>
+        <option>
+            <name>19</name>
+            <key>19</key>
+        </option>
+        <option>
+            <name>20</name>
+            <key>20</key>
+        </option>
+        <option>
+            <name>21</name>
+            <key>21</key>
+        </option>
+        <option>
+            <name>22</name>
+            <key>22</key>
+        </option>
+        <option>
+            <name>23</name>
+            <key>23</key>
+        </option>
+        <option>
+            <name>24</name>
+            <key>24</key>
+        </option>
+        <option>
+            <name>25</name>
+            <key>25</key>
+        </option>
+        <option>
+            <name>26</name>
+            <key>26</key>
+        </option>
+        <option>
+            <name>27</name>
+            <key>27</key>
+        </option>
+        <option>
+            <name>28</name>
+            <key>28</key>
+        </option>
+        <option>
+            <name>29</name>
+            <key>29</key>
+        </option>
+        <option>
+            <name>30</name>
+            <key>30</key>
+        </option>
+        <option>
+            <name>31</name>
+            <key>31</key>
+        </option>
+        <option>
+            <name>32</name>
+            <key>32</key>
+        </option>
+    </param>
+    <param>
+        <name>Ch0</name>
+        <key>channel0</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 0 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch0: start</name>
+        <key>start0</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 0 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch0: end</name>
+        <key>end0</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 0 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch1</name>
+        <key>channel1</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 1 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch1: start</name>
+        <key>start1</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 1 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch1: end</name>
+        <key>end1</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 1 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch2</name>
+        <key>channel2</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 2 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch2: start</name>
+        <key>start2</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 2 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch2: end</name>
+        <key>end2</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 2 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch3</name>
+        <key>channel3</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 3 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch3: start</name>
+        <key>start3</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 3 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch3: end</name>
+        <key>end3</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 3 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch4</name>
+        <key>channel4</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 4 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch4: start</name>
+        <key>start4</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 4 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch4: end</name>
+        <key>end4</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 4 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch5</name>
+        <key>channel5</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 5 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch5: start</name>
+        <key>start5</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 5 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch5: end</name>
+        <key>end5</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 5 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch6</name>
+        <key>channel6</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 6 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch6: start</name>
+        <key>start6</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 6 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch6: end</name>
+        <key>end6</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 6 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch7</name>
+        <key>channel7</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 7 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch7: start</name>
+        <key>start7</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 7 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch7: end</name>
+        <key>end7</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 7 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch8</name>
+        <key>channel8</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 8 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch8: start</name>
+        <key>start8</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 8 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch8: end</name>
+        <key>end8</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 8 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch9</name>
+        <key>channel9</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 9 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch9: start</name>
+        <key>start9</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 9 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch9: end</name>
+        <key>end9</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 9 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch10</name>
+        <key>channel10</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 10 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch10: start</name>
+        <key>start10</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 10 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch10: end</name>
+        <key>end10</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 10 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch11</name>
+        <key>channel11</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 11 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch11: start</name>
+        <key>start11</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 11 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch11: end</name>
+        <key>end11</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 11 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch12</name>
+        <key>channel12</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 12 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch12: start</name>
+        <key>start12</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 12 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch12: end</name>
+        <key>end12</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 12 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch13</name>
+        <key>channel13</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 13 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch13: start</name>
+        <key>start13</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 13 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch13: end</name>
+        <key>end13</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 13 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch14</name>
+        <key>channel14</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 14 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch14: start</name>
+        <key>start14</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 14 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch14: end</name>
+        <key>end14</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 14 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch15</name>
+        <key>channel15</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 15 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch15: start</name>
+        <key>start15</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 15 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch15: end</name>
+        <key>end15</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 15 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch16</name>
+        <key>channel16</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 16 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch16: start</name>
+        <key>start16</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 16 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch16: end</name>
+        <key>end16</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 16 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch17</name>
+        <key>channel17</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 17 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch17: start</name>
+        <key>start17</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 17 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch17: end</name>
+        <key>end17</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 17 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch18</name>
+        <key>channel18</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 18 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch18: start</name>
+        <key>start18</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 18 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch18: end</name>
+        <key>end18</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 18 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch19</name>
+        <key>channel19</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 19 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch19: start</name>
+        <key>start19</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 19 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch19: end</name>
+        <key>end19</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 19 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch20</name>
+        <key>channel20</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 20 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch20: start</name>
+        <key>start20</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 20 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch20: end</name>
+        <key>end20</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 20 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch21</name>
+        <key>channel21</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 21 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch21: start</name>
+        <key>start21</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 21 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch21: end</name>
+        <key>end21</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 21 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch22</name>
+        <key>channel22</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 22 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch22: start</name>
+        <key>start22</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 22 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch22: end</name>
+        <key>end22</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 22 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch23</name>
+        <key>channel23</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 23 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch23: start</name>
+        <key>start23</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 23 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch23: end</name>
+        <key>end23</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 23 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch24</name>
+        <key>channel24</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 24 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch24: start</name>
+        <key>start24</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 24 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch24: end</name>
+        <key>end24</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 24 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch25</name>
+        <key>channel25</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 25 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch25: start</name>
+        <key>start25</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 25 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch25: end</name>
+        <key>end25</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 25 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch26</name>
+        <key>channel26</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 26 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch26: start</name>
+        <key>start26</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 26 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch26: end</name>
+        <key>end26</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 26 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch27</name>
+        <key>channel27</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 27 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch27: start</name>
+        <key>start27</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 27 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch27: end</name>
+        <key>end27</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 27 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch28</name>
+        <key>channel28</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 28 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch28: start</name>
+        <key>start28</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 28 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch28: end</name>
+        <key>end28</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 28 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch29</name>
+        <key>channel29</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 29 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch29: start</name>
+        <key>start29</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 29 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch29: end</name>
+        <key>end29</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 29 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch30</name>
+        <key>channel30</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 30 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch30: start</name>
+        <key>start30</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 30 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch30: end</name>
+        <key>end30</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 30 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch31</name>
+        <key>channel31</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 31 then 'none' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch31: start</name>
+        <key>start31</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 31 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Ch31: end</name>
+        <key>end31</key>
+        <value></value>
+        <type>string</type>
+        <hide>#if $nchan() > 31 then 'part' else 'all'#</hide>
+    </param>
+    <param>
+        <name>Minimum Chunk Size</name>
+        <key>min_chunksize</key>
+        <value>0</value>
+        <type>int</type>
+        <hide>part</hide>
+        <tab>Advanced</tab>
+    </param>
+    <param>
+        <name>Show Message Port</name>
+        <key>hide_msg_port</key>
+        <value>True</value>
+        <type>enum</type>
+        <hide>part</hide>
+        <option>
+            <name>Yes</name>
+            <key>False</key>
+        </option>
+        <option>
+            <name>No</name>
+            <key>True</key>
+        </option>
+        <tab>Advanced</tab>
+    </param>
+
+    <check>$nchan > 0</check>
+    <check>$min_chunksize >= 0</check>
+
+    <source>
+        <name>out</name>
+        <type></type>
+        <vlen></vlen>
+        <nports>$nchan</nports>
+    </source>
+    <source>
+        <name>properties</name>
+        <type>message</type>
+        <optional>True</optional>
+        <hide>$hide_msg_port</hide>
+    </source>
+
+    <doc>
+Read data in Digital RF format.
+
+In addition to outputting samples from Digital RF format data, this
+block also emits a 'properties' message containing inherent channel
+properties and adds stream tags using the channel's accompanying
+Digital Metadata. See the Notes section for details on what the
+messages and stream tags contain.
+
+
+Parameters
+---------------
+
+Directory : string
+    A top-level directory containing Digital RF channel directories.
+
+Repeat : bool
+    If True, loop the data continuously from the start after the end
+    is reached. If False, stop after the data is read once.
+
+Throttle : bool
+    If True, playback the samples at their recorded sample rate.
+    If False, read samples as quickly as possible.
+
+Gapless Playback : bool
+    If True, output zeroed samples for any missing data between start
+    and end. If False, skip missing samples and add an `rx_time` stream
+    tag to indicate the gap.
+
+Number of channels : int
+    Number of channels to output.
+
+ChN : string
+    Identifier for channel number N. This can be the channel name or
+    an integer giving the index from the available channels sorted
+    alphabetically. An empty string uses the next available channel
+    alphabetically.
+
+ChN start : None | int | float | string, optional
+    A value giving the start of the channel's playback.
+
+    If None or '', the start of the channel's available data is used.
+
+    If an integer, it is interpreted as a sample index giving the
+    number of samples since the epoch (t_since_epoch*sample_rate).
+
+    If a float, it is interpreted as a timestamp (seconds since epoch).
+
+    If a string, four forms are permitted:
+        1) a string which can be evaluated to an integer/float and
+            interpreted as above,
+        2) a string beginning with '+' and followed by an integer
+            (float) expression, interpreted as samples (seconds) from
+            the start of the data, and
+        3) a time in ISO8601 format, e.g. '2016-01-01T16:24:00Z'
+        4) 'now' ('nowish'), indicating the current time (rounded up)
+
+ChN end : None | int | float | string, optional
+    A value giving the end of the channel's playback.
+
+    If None or '', the end of the channel's available data is used.
+
+    Otherwise, this is interpreted in the same way as the start value.
+
+
+Other Parameters
+-----------------------
+
+Minimum Chunk Size : int, optional
+    Minimum number of samples to output at once. This value can be
+    used to adjust the source's performance to reduce underruns and
+    processing time. If 0, a sensible default will be used.
+
+
+Notes
+-----
+
+A top-level directory must contain files in the format:
+    [channel]/[YYYY-MM-DDTHH-MM-SS]/rf@[seconds].[%03i milliseconds].h5
+
+If more than one top level directory contains the same channel_name
+subdirectory, this is considered the same channel. An error is raised
+if their sample rates differ, or if their time periods overlap.
+
+Upon start, this block sends 'properties' messages on its output
+message port that contains a dictionaries with one key, the channel's
+name, and a value which is a dictionary of properties found in the
+channel's 'drf_properties.h5' file.
+
+This block emits the following stream tags at the appropriate sample
+for each of the channel's accompanying Digital Metadata samples:
+
+    rx_time : (int secs, float frac) tuple
+        Time since epoch of the sample.
+
+    rx_rate : float
+        Sample rate in Hz.
+
+    rx_freq : float | 1-D array of floats
+        Center frequency or frequencies of the subchannels based on
+        the 'center_frequencies' metadata field.
+
+    metadata : dict
+        Any additional Digital Metadata fields are added to this
+        dictionary tag of metadata.
+
+    </doc>
+</block>

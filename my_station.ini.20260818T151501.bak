@@ -1,0 +1,158 @@
+[config]
+receiver_station_name = "Yoshkar-Ola"
+realtime = true
+channel = ["ch0"]
+sample_rate = 25000000
+center_freq = 12.5e6
+data_dir = "/dev/shm/hf25"
+ringbuffer_max_age_min = 3
+ringbuffer_cleanup = true
+serendipitous = false
+required_processes = [
+	"recorder=rx_uhd_ext_gps|rx_uhd",
+	"detect_chirps=detect_chirps.py",
+	"detections2metadata=detections2metadata.py",
+	"calc_ionograms=calc_ionograms.py",
+	"sync_iono_data=sync_iono_data.py"]
+output_dir = "/home/ionouser/ionozond_data2/"
+
+[detection]
+threshold_snr = 13.0
+max_simultaneous_detections = 5
+min_detections = 3
+step = 12
+n_samples_per_block = 5000000
+minimum_frequency_spacing = 0.2e6
+chirp_rates = [100e3,125e3,500.0084e3]
+
+[lfm]
+save_raw_voltage = false
+range_resolution = 2e3
+frequency_resolution = 50e3
+max_range_extent = 4000e3
+fast_boxcar_filter = false
+downconversion_filter = "fir"
+n_downconversion_threads = 1
+downconversion_block_samples = 4000
+decimation = 625
+min_range = 800e3
+max_range = 1700e3
+manual_range_extent = false
+max_freq = 25e6
+min_freq = 0.5e6
+manual_freq_extent = true
+storage_snr_threshold = 2
+maximum_analysis_frequency = 30e6
+minimum_analysis_frequency = 0
+sounder_timings = [[{"chirp-rate": 100000, "rep": 300, "chirpt": 235, "id": 2, "transmit_name": "NIC1"}], [{"chirp-rate": 100000, "rep": 300, "chirpt": 245, "id": 4, "transmit_name": "NIC3"}]]
+serendipitous = false
+
+[rtf]
+links = [["SGO","Yoshkar-Ola"],["Ramfjordmoen","Yoshkar-Ola"],["Juliusruh","Yoshkar-Ola"]]
+
+[transfer]
+copy_to_server = true
+copy_destination = "shovel@4.235.86.214:/var/www/html/iono/"
+
+[digisonde]
+sounding_interval_sec = 450
+transmitter_station_name = "Ramfjordmoen"
+snr_threshold = 2
+filter_strategy = "fir"
+use_c_downconvert = true
+decimation = 250
+freq_start = 1000000
+freq_stop = 18000000
+freq_step = 50000
+ipp_us = 10000
+n_ipp = 64
+offset_us = 1336
+wait_for_data = true
+
+[digisonde-Dourbes]
+sounding_interval_sec = 900
+transmitter_station_name = "DB049"
+snr_threshold = 2
+filter_strategy = "fir"
+use_c_downconvert = true
+decimation = 250
+freq_start = 1000000
+freq_stop = 12000000
+freq_step = 50000
+ipp_us = 10000
+n_ipp = 32
+offset_us = 7300
+wait_for_data = true
+start_offset = 1
+sum_ox = true
+
+[digisonde-Chilton]
+sounding_interval_sec = 600
+transmitter_station_name = "Chilton"
+snr_threshold = 2
+filter_strategy = "fir"
+use_c_downconvert = true
+decimation = 250
+freq_start = 1000000
+freq_stop = 15000000
+freq_step = 50000
+ipp_us = 10000
+n_ipp = 32
+offset_us = 3900
+wait_for_data = true
+start_offset = 0
+sum_ox = true
+
+[digisonde-Thule]
+sounding_interval_sec = 450
+transmitter_station_name = "THJ76"
+snr_threshold = 2
+filter_strategy = "fir"
+use_c_downconvert = true
+decimation = 250
+freq_start = 2025000
+freq_stop = 20000000
+freq_step = 25000
+ipp_us = 10000
+n_ipp = 32
+offset_us = 8066
+wait_for_data = true
+start_offset = 0
+sum_ox = true
+
+[digisonde-Juliusruh]
+sounding_interval_sec = 300
+transmitter_station_name = "Juliusruh"
+snr_threshold = 2
+filter_strategy = "fir"
+use_c_downconvert = true
+decimation = 250
+freq_start = 1010000
+freq_stop = 14000000
+freq_step = 50000
+ipp_us = 10000
+n_ipp = 16
+offset_us = 2000
+wait_for_data = true
+start_offset = 196
+sum_ox = true
+sounding_hrs = [5.5,18]
+
+[digisonde-JuliusruhN]
+sounding_interval_sec = 300
+transmitter_station_name = "Juliusruh"
+snr_threshold = 2
+filter_strategy = "fir"
+use_c_downconvert = true
+decimation = 250
+freq_start = 1010000
+freq_stop = 10000000
+freq_step = 25000
+ipp_us = 10000
+n_ipp = 16
+offset_us = 2000
+wait_for_data = true
+start_offset = 196
+sum_ox = true
+sounding_hrs = [18,5.5]
+

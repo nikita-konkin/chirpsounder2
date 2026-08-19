@@ -1,0 +1,52 @@
+diff --git a/calc_ionograms.py b/calc_ionograms.py
+index 03e3cfd..6ddd34b 100644
+--- a/calc_ionograms.py
++++ b/calc_ionograms.py
+@@ -55,15 +55,45 @@ def kill(conf):
+     exists = os.path.isfile(conf.kill_path)
+     return exists
+ 
+-def get_valid_bounds(d, ch, poll_s=1.0):
+-    """Return DigitalRF bounds once both endpoints are available."""
++def get_valid_bounds(d, ch, poll_s=1.0, max_wait_s=30.0):
++    """Return DigitalRF bounds once both endpoints are available.
++
++    Bounded, because polling forever cannot recover from the case that
++    actually happens. DigitalRFReader caches its channel list when it is
++    constructed, so a reader built before the recorder created the channel
++    directory can never see that channel however long it waits. The only cure
++    is a new reader, and raising is what lets the caller build one: both
++    long-running callers wrap DigitalRFReader(conf.data_dir) in a
++    `while True: try:`, so an exception here reopens the ringbuffer while an
++    infinite loop here never reaches them.
++
++    This is a startup race, and the consumer is started before the producer --
++    calc_ionograms.py is launched several lines ahead of rx_uhd_ext_gps in the
++    station scripts, and /dev/shm is empty after a reboot. Anything that
++    delays the recorder's first sample decides it. Adding two blocking GPSDO
++    sensor reads, 1-2 s each, to recorder startup was enough to lose it at
++    DOB, which then ran for two days recording and detecting normally while
++    writing no ionograms at all.
++
++    The hang is invisible from outside: the process stays alive and busy, the
++    unit stays active because it supervises the recorder loop and not this
++    child, and the only symptom is the message below repeating once a second
++    in the log. Failing after max_wait_s converts that into a retry that can
++    actually succeed.
++    """
++    waited = 0.0
+     while True:
+         b = d.get_bounds(ch)
+         if b is not None and len(b) >= 2 and b[0] is not None and b[1] is not None:
+             return b
+ 
++        if waited >= max_wait_s:
++            raise IOError("no DigitalRF bounds for channel %s after %1.0f s; "
++                          "reopening the reader" % (ch, waited))
++
+         print("no DigitalRF data bounds available for channel %s; waiting for data" % (ch))
+         time.sleep(poll_s)
++        waited += poll_s
+ 
+ 
+ comm = MPI.COMM_WORLD

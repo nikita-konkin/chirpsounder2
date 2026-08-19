@@ -1,0 +1,13 @@
+logrotate state -- version 2
+"/home/hfrx2/src/git/chirpsounder2/logs/detect.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/housekeeping.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/plot_detectionfiles.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/timings.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/detections2metadata.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/ionograms.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/plot_rtf.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/thor.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/plot_ionograms.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/digisonde.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/sync.log" 2026-8-6-21:0:0
+"/home/hfrx2/src/git/chirpsounder2/logs/ringbuffer.log" 2026-8-6-21:0:0
