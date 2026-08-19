@@ -19,8 +19,17 @@ rx_uhd_ext_gps
 *.so
 *.o
 
-# Config backups written by the agent and by hand. The live my_station.ini is
-# tracked on purpose -- it is the station's state and the point of this repo.
+# **The live config is agent-managed state, not source.**
+# services/agent/control.py in ionograms-handler rewrites this exact path in
+# place -- atomic write plus a timestamped .bak -- every time a setting is
+# changed from the console, and BACKLOG sec. 30 plans to make that the normal
+# way to move the band. Tracking it would leave the station's working tree
+# permanently dirty and stand a merge conflict in front of every pull, on the
+# one file whose contents must match what the recorder was built for.
+#
+# Nothing is lost: docs/chirpsounder2-config.md in ionograms-handler records
+# what this station sets, key by key, beside what each key actually does.
+my_station.ini
 my_station.ini.*.bak
 my_station.ini.bak-*
 my_station.ini.*T*.bak

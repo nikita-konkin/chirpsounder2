@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Shout when a pull has moved the recorder's source ahead of its binary.
+#
+# Install (per checkout -- git hooks are not version controlled):
+#   ln -sf ../../tools/git-hooks/post-merge .git/hooks/post-merge
+#
+# WHY THIS EXISTS
+#
+# `rx_uhd_ext_gps` is a build product. Pulling source does not rebuild it, and
+# a recorder running yesterday's binary against today's config is the failure
+# this station has actually had: twice on 2026-08-19, once from an ini applied
+# before the rebuild and once from a source edit that was never rebuilt at all.
+# Both times every process reported healthy and the products came out empty,
+# because the LO is not written into the Digital RF metadata and nothing
+# downstream can tell a mistuned recorder from a working one.
+#
+# `git pull` makes that easier to get wrong than applying a patch did: it is
+# one quiet command that can change many files, and nothing about it suggests
+# a compiler needs to run. Hence this hook.
+#
+# It only warns. It cannot rebuild -- the recorder must be stopped first
+# (SIGINT only; a USRP killed any other way keeps transmitting and needs a
+# power cycle), and deciding when to stop recording is not a git hook's call.
+set -u
+
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+bin="$root/rx_uhd_ext_gps"
+
+# Anything that ends up inside the recorder binary.
+sources="rx_uhd_ext_gps.cpp chirp_downconvert.c chirp_downconvert.h Makefile"
+
+if [ ! -e "$bin" ]; then
+    # Not a station checkout -- a developer clone has no binary and never will.
+    exit 0
+fi
+
+stale=""
+for f in $sources; do
+    [ -e "$root/$f" ] || continue
+    if [ "$root/$f" -nt "$bin" ]; then
+        stale="$stale $f"
+    fi
+done
+
+[ -n "$stale" ] || exit 0
+
+cat >&2 <<MSG
+
+  ============================================================
+  THE RECORDER'S SOURCE IS NEWER THAN ITS BINARY.
+
+  Changed by this pull, and not yet compiled in:
+   $stale
+
+  rx_uhd_ext_gps is still the old build. If this pull changed
+  how it tunes, records or timestamps, the running recorder
+  does not have that change -- and a mistuned recorder looks
+  healthy in every log while producing empty products.
+
+  To adopt it:  stop chirp-rx.service, rebuild, start.
+  To ignore it: nothing happens, the old binary keeps running.
+
+  Check what is actually running with:
+    journalctl -u chirp-rx.service | grep 'Channel 0 LO'
+  ============================================================
+
+MSG
+exit 0

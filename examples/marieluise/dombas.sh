@@ -50,9 +50,37 @@ MPIRUN="mpirun --bind-to none"
 # if you have a fast SSD or raid, you can also use that
 RINGBUFFER_DIR=/dev/shm/hf25
 SAMPLE_RATE=25e6
-CENTER_FREQ=12.5e6
 # CONF_FILE="$INSTALL_PATH/examples/marieluise/dombas.ini"
 CONF_FILE="${CONF_FILE:-$INSTALL_PATH/my_station.ini}"
+
+# The recorder's LO. This replaces a bare `CENTER_FREQ=12.5e6` that sat here
+# and was read by nothing -- the recorder had no way to accept it until 0014,
+# so every launcher under examples/ sets this variable and not one of them
+# passes it. It has been stale since the band moved to 20 MHz on 2026-08-19,
+# and it looked authoritative the whole time.
+#
+# Reading it from the ini is the `TBD: change cpp program so that ini file
+# defines USRP setup!` further down, answered for the one setting that had
+# already caused damage. calc_ionograms builds its downconversion mixer from
+# `center_freq` while the samples come from wherever the recorder tuned;
+# nothing checks the two against each other and nothing can, since the LO is
+# not in the Digital RF metadata. A mismatch dechirps by the difference and
+# yields empty products with no error in any log -- it blinded the station
+# twice on 2026-08-19.
+#
+# Read here, before this script starts anything, and fatal if it fails: an
+# unreadable ini must stop the launch rather than fall back to the recorder's
+# built-in 12.5e6, which is precisely the silent 12.5-vs-20 split that did the
+# damage. Failing here costs a restart; failing quietly cost a day.
+#
+# `build_fvec=False` skips the detection frequency vector, which this does not
+# need and which allocates n_samples_per_block floats to throw away.
+CENTER_FREQ=$(python3 -c "import chirp_config, sys; print(chirp_config.chirp_config(sys.argv[1], verbose=False, build_fvec=False).center_freq)" "$CONF_FILE")
+if [ -z "$CENTER_FREQ" ]; then
+    echo "FATAL: could not read center_freq from $CONF_FILE" >&2
+    exit 1
+fi
+echo "LO $CENTER_FREQ Hz (from $CONF_FILE)"
 
 # Ringbuffer cap, enforced by `drf ringbuffer` below. Roughly 200 MB under half
 # the machine's RAM for a tmpfs; far more on an SSD or raid.
@@ -103,10 +131,9 @@ echo "rx_uhd_ext_gps (restarting every 24 hours)"
 (
     while true;
     do
-        # TBD: change cpp program so that ini file defines USRP setup!
         # 0-1 is ONE physical core, not two -- they are hyperthread siblings.
         # See the taskset at the top of this script.
-        taskset -c 0-1 ./rx_uhd_ext_gps --outdir="$RINGBUFFER_DIR" --usrp_args=recv_buff_size=500000000 > logs/thor.log 2>&1
+        taskset -c 0-1 ./rx_uhd_ext_gps --outdir="$RINGBUFFER_DIR" --usrp_args=recv_buff_size=500000000 --center-freq="$CENTER_FREQ" > logs/thor.log 2>&1
 
         sleep 5
 
