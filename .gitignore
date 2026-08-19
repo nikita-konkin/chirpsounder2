@@ -1,0 +1,31 @@
+# Virtualenvs. Both of these are checked in at df97ab3d and are 99% of the
+# repo: 22631 of 22833 tracked files, and most of the 274 MB .git.
+.venv/
+.venv38/
+
+# Byte-compiled
+__pycache__/
+*.py[cod]
+
+# Runtime logs. logs/detect.log alone is 33 MB and grows forever.
+logs/
+
+# Build products of the Makefile. rx_uhd_ext_gps in particular must be built
+# on the station -- see patches/0006 in ionograms-handler: a `make` without it
+# produces an -O0 binary. A checked-in copy invites someone to trust the wrong
+# one, and `ls -l` on it is how you tell whether a source edit was rebuilt.
+rx_uhd
+rx_uhd_ext_gps
+*.so
+*.o
+
+# Config backups written by the agent and by hand. The live my_station.ini is
+# tracked on purpose -- it is the station's state and the point of this repo.
+my_station.ini.*.bak
+my_station.ini.bak-*
+my_station.ini.*T*.bak
+
+# Local scratch
+kill.txt
+*.swp
+.DS_Store
